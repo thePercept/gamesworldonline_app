@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games List</title>
+</head>
+<body>
+    <div class="user-info">
+        User Name {{ site_data['userdata']['username']}}
+        Email {{ site_data['userdata']['email'] }}
+    </div>
+    <hr/>
+    <h1>Games List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Game Name</th>
+                <th>Year Launched</th>
+                <th>Game Rating</th>
+                <th>Base Price INR(₹)</th>
+                <th>Platform</th>
+                <th>Created By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in site_data['gamedata'] %}
+            <tr>
+                <td>{{ game['id'] }}</td>
+                <td>{{ game['game_name'] }}</td>
+                <td>{{ game['base_price'] }}</td>
+                <td>{{ game['platform'] }}</td>
+                <td>{{ game['year_launched'] }}</td>
+                <td>{{ game['game_rating'] }}</td>
+                <td>{{ game['created_by'] }}</td>
+                <td><button onclick="addToCart('{{ game['id'] }}')">Add to Cart</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Cart </h2>
+    <ol>
+        {% for item in site_data['cart'] %}
+        <li>{{ item['id'] }} &nbsp;| {{ item['name'] }} | &nbsp;| {{ item['price'] }} | <button onclick="removeFromCart('{{ item['id'] }}')">Remove</button></li>
+        {% endfor %}
+    </ol>
+
+    <script>
+        function addToCart(gameId) {
+            console.log("Logging.....")
+            console.log("DATA HERE ?? ",gameId)
+            const requestBody = {
+                gameId: gameId
+            };
+    
+            fetch('/add_to_cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to add game to cart.');
+            })
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+                alert('An error occurred while adding game to cart.');
+            });
+        }
+
+        function removeFromCart(gameId) {
+            alert(gameId)
+            fetch('/remove_from_cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({gameId: gameId})
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to remove game from cart.');
+            })
+            .then(data => {
+                alert(data.message);
+                location.reload();  // Refresh the page to update cart content
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+                alert('An error occurred while removing game from cart.');
+            });
+        }        
+    </script>
+</body>
+</html>
