@@ -13,7 +13,7 @@ app.secret_key = 'your secret key'
  
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'mypassword'
+app.config['MYSQL_PASSWORD'] = 'myPassword@321'
 app.config['MYSQL_DB'] = 'gameworlds_db'
  
  
